@@ -75,6 +75,12 @@ class RecordMarkdown:
             md_text,
             flags=re.DOTALL
         )
+        md_text = re.sub(
+            r'\[\^\d+\]',
+            '',
+            md_text
+        )
+        md_text = md_text.replace("l' ", "l'").replace("L' ", "L'")
         return md_text
 
 if __name__ == "__main__":
