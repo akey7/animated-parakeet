@@ -213,4 +213,8 @@ __marimo__/
 *.wav
 *.ssml
 input/
+intermediate/
 output/
+
+# macOS junk
+.DS_Store
