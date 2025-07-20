@@ -1,5 +1,6 @@
 import os
 import re
+from itertools import product
 import subprocess
 from dotenv import load_dotenv
 
@@ -18,7 +19,6 @@ class RecordMarkdown:
                 intermediate_txt_filename = os.path.join(
                     self.intermediate_folder, filename.replace(".md", ".txt")
                 )
-                intermediate_aiff_filename = os.path.join(self.intermediate_folder, filename.replace(".md", ".aiff"))
                 with open(
                     input_md_filename, "r", encoding="utf-8", errors="replace"
                 ) as f:
@@ -29,11 +29,18 @@ class RecordMarkdown:
                 ) as f:
                     f.write(plain_text)
                 voices = ["Amélie", "Thomas"]
-                for voice in voices:
-                    aiff_filename_01 = f'{filename.replace(".md", "")} {voice}.aiff'
-                    aiff_filename = os.path.join(self.intermediate_folder, aiff_filename_01)
-                    self.execute_say_command(intermediate_txt_filename, aiff_filename, voice=voice)
-                    print(input_md_filename, intermediate_txt_filename, aiff_filename)
+                rates = [60, 80, 100]
+                for rate, voice in product(rates, voices):
+                    aiff_filename_01 = (
+                        f'{filename.replace(".md", "")} {voice} {rate}.aiff'
+                    )
+                    aiff_filename = os.path.join(
+                        self.intermediate_folder, aiff_filename_01
+                    )
+                    self.execute_say_command(
+                        intermediate_txt_filename, aiff_filename, rate=rate, voice=voice
+                    )
+                    print(aiff_filename)
 
     def clean_markdown(self, md_text):
         """
