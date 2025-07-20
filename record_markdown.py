@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 from dotenv import load_dotenv
 
 
@@ -12,14 +13,31 @@ class RecordMarkdown:
 
     def iterate_over_input_md_files(self):
         for filename in os.listdir(self.md_input_folder):
-            input_md_filename = os.path.join(self.md_input_folder, filename)
-            intermediate_txt_filename = os.path.join(self.intermediate_folder, filename.replace(".md", ".txt"))
-            with open(input_md_filename, "r", encoding="utf-8") as f:
-                md_text = f.read()
-            plain_text = self.clean_markdown(md_text)
-            with open(intermediate_txt_filename, "w", encoding="utf-8") as f:
-                f.write(plain_text)
-            print(input_md_filename, "->", intermediate_txt_filename)
+            if filename.endswith(".md"):
+                input_md_filename = os.path.join(self.md_input_folder, filename)
+                intermediate_txt_filename = os.path.join(
+                    self.intermediate_folder, filename.replace(".md", ".txt")
+                )
+                with open(
+                    input_md_filename, "r", encoding="utf-8", errors="replace"
+                ) as f:
+                    md_text = f.read()
+                plain_text = self.clean_markdown(md_text)
+                with open(
+                    intermediate_txt_filename, "w", encoding="utf-8", errors="replace"
+                ) as f:
+                    f.write(plain_text)
+                voices = ["Amélie", "Thomas"]
+                for voice in voices:
+                    aiff_filename_01 = (
+                        f'{filename.replace(".md", "")} {voice}.aiff'
+                    )
+                    aiff_filename = os.path.join(
+                        self.intermediate_folder, aiff_filename_01
+                    )
+                    self.execute_say_command(
+                        intermediate_txt_filename, aiff_filename, voice
+                    )
 
     def clean_markdown(self, md_text):
         """
@@ -30,58 +48,59 @@ class RecordMarkdown:
         5) Remove HTML tags,
         6) Remove bold (**text** / __text__) and italic (*text* / _text_) markers.
         """
-        md_text = re.sub(
-            r'\A---\s*\n.*?\n---\s*\n',
-            '',
-            md_text,
-            flags=re.DOTALL
-        )
-        md_text = re.sub(
-            r'!\[.*?\]\(.*?\)|!\[[^\]]*\]\[[^\]]*\]',
-            '',
-            md_text
-        )
+        md_text = re.sub(r"\A---\s*\n.*?\n---\s*\n", "", md_text, flags=re.DOTALL)
+        md_text = re.sub(r"!\[.*?\]\(.*?\)|!\[[^\]]*\]\[[^\]]*\]", "", md_text)
         md_text = re.sub(
             r'^\s*\[[^\]]+\]:\s*.*\.(?:png|jpe?g|gif|svg)(?:\s*".*?")?\s*$\n?',
-            '',
+            "",
             md_text,
-            flags=re.MULTILINE | re.IGNORECASE
+            flags=re.MULTILINE | re.IGNORECASE,
         )
-        md_text = re.sub(
-            r'(?:^\s*\|.*\|\s*$\n?){2,}',
-            '',
-            md_text,
-            flags=re.MULTILINE
-        )
-        md_text = re.sub(
-            r'\[([^\]]+)\]\([^)]+\)',
-            r'\1',
-            md_text
-        )
-        md_text = re.sub(
-            r'<[^>]+>',
-            '',
-            md_text
-        )
-        md_text = re.sub(
-            r'(\*\*|__)(.*?)\1',
-            r'\2',
-            md_text,
-            flags=re.DOTALL
-        )
-        md_text = re.sub(
-            r'(\*|_)(.*?)\1',
-            r'\2',
-            md_text,
-            flags=re.DOTALL
-        )
-        md_text = re.sub(
-            r'\[\^\d+\]',
-            '',
-            md_text
-        )
+        md_text = re.sub(r"(?:^\s*\|.*\|\s*$\n?){2,}", "", md_text, flags=re.MULTILINE)
+        md_text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", md_text)
+        md_text = re.sub(r"<[^>]+>", "", md_text)
+        md_text = re.sub(r"(\*\*|__)(.*?)\1", r"\2", md_text, flags=re.DOTALL)
+        md_text = re.sub(r"(\*|_)(.*?)\1", r"\2", md_text, flags=re.DOTALL)
+        md_text = re.sub(r"\[\^\d+\]", "", md_text)
         md_text = md_text.replace("l' ", "l'").replace("L' ", "L'")
         return md_text
+
+    def execute_say_command(
+        self, input_txt_filename, output_aiff_filename, voice
+    ):
+        try:
+            result = subprocess.run(
+                [
+                    "say",
+                    "-v",
+                    voice,
+                    "-f",
+                    input_txt_filename,
+                    "-o",
+                    output_aiff_filename,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+
+            if result.returncode == 0:
+                print(f"{output_aiff_filename} created successfully")
+                return True
+            else:
+                print(f"Command failed: {result.stderr}")
+                return False
+
+        except subprocess.TimeoutExpired:
+            print("Command timed out")
+            return False
+        except FileNotFoundError:
+            print("'say' command not found (are you on macOS?)")
+            return False
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return False
+
 
 if __name__ == "__main__":
     record_markdown = RecordMarkdown()
