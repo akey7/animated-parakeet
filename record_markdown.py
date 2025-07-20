@@ -12,14 +12,15 @@ class RecordMarkdown:
 
     def iterate_over_input_md_files(self):
         for filename in os.listdir(self.md_input_folder):
-            input_md_filename = os.path.join(self.md_input_folder, filename)
-            intermediate_txt_filename = os.path.join(self.intermediate_folder, filename.replace(".md", ".txt"))
-            with open(input_md_filename, "r", encoding="utf-8") as f:
-                md_text = f.read()
-            plain_text = self.clean_markdown(md_text)
-            with open(intermediate_txt_filename, "w", encoding="utf-8") as f:
-                f.write(plain_text)
-            print(input_md_filename, "->", intermediate_txt_filename)
+            if filename.endswith(".md"):
+                input_md_filename = os.path.join(self.md_input_folder, filename)
+                intermediate_txt_filename = os.path.join(self.intermediate_folder, filename.replace(".md", ".txt"))
+                with open(input_md_filename, "r", encoding="utf-8", errors="replace") as f:
+                    md_text = f.read()
+                plain_text = self.clean_markdown(md_text)
+                with open(intermediate_txt_filename, "w", encoding="utf-8", errors="replace") as f:
+                    f.write(plain_text)
+                print(input_md_filename, "->", intermediate_txt_filename)
 
     def clean_markdown(self, md_text):
         """
