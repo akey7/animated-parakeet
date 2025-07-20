@@ -1,6 +1,5 @@
 import os
 import re
-from itertools import product
 import subprocess
 from dotenv import load_dotenv
 
@@ -29,18 +28,16 @@ class RecordMarkdown:
                 ) as f:
                     f.write(plain_text)
                 voices = ["Amélie", "Thomas"]
-                rates = [60, 80, 100]
-                for rate, voice in product(rates, voices):
+                for voice in voices:
                     aiff_filename_01 = (
-                        f'{filename.replace(".md", "")} {voice} {rate}.aiff'
+                        f'{filename.replace(".md", "")} {voice}.aiff'
                     )
                     aiff_filename = os.path.join(
                         self.intermediate_folder, aiff_filename_01
                     )
                     self.execute_say_command(
-                        intermediate_txt_filename, aiff_filename, rate=rate, voice=voice
+                        intermediate_txt_filename, aiff_filename, voice
                     )
-                    print(aiff_filename)
 
     def clean_markdown(self, md_text):
         """
@@ -69,7 +66,7 @@ class RecordMarkdown:
         return md_text
 
     def execute_say_command(
-        self, input_txt_filename, output_aiff_filename, rate=60, voice="Amélie"
+        self, input_txt_filename, output_aiff_filename, voice
     ):
         try:
             result = subprocess.run(
@@ -77,8 +74,6 @@ class RecordMarkdown:
                     "say",
                     "-v",
                     voice,
-                    "-r",
-                    str(rate),
                     "-f",
                     input_txt_filename,
                     "-o",
@@ -86,7 +81,7 @@ class RecordMarkdown:
                 ],
                 capture_output=True,
                 text=True,
-                timeout=60,
+                timeout=300,
             )
 
             if result.returncode == 0:
@@ -102,9 +97,9 @@ class RecordMarkdown:
         except FileNotFoundError:
             print("'say' command not found (are you on macOS?)")
             return False
-        # except Exception as e:
-        #     print(f"Unexpected error: {e}")
-        #     return False
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return False
 
 
 if __name__ == "__main__":
