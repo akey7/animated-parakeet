@@ -28,8 +28,12 @@ class RecordMarkdown:
                     intermediate_txt_filename, "w", encoding="utf-8", errors="replace"
                 ) as f:
                     f.write(plain_text)
-                self.execute_say_command(intermediate_txt_filename, intermediate_aiff_filename)
-                print(input_md_filename, intermediate_txt_filename, intermediate_aiff_filename)
+                voices = ["Amélie", "Thomas"]
+                for voice in voices:
+                    aiff_filename_01 = f'{filename.replace(".md", "")} {voice}.aiff'
+                    aiff_filename = os.path.join(self.intermediate_folder, aiff_filename_01)
+                    self.execute_say_command(intermediate_txt_filename, aiff_filename, voice=voice)
+                    print(input_md_filename, intermediate_txt_filename, aiff_filename)
 
     def clean_markdown(self, md_text):
         """
@@ -58,7 +62,7 @@ class RecordMarkdown:
         return md_text
 
     def execute_say_command(
-        self, input_txt_filename, output_aiff_filename, voice="Amélie"
+        self, input_txt_filename, output_aiff_filename, rate=60, voice="Amélie"
     ):
         try:
             result = subprocess.run(
@@ -66,6 +70,8 @@ class RecordMarkdown:
                     "say",
                     "-v",
                     voice,
+                    "-r",
+                    str(rate),
                     "-f",
                     input_txt_filename,
                     "-o",
@@ -89,9 +95,9 @@ class RecordMarkdown:
         except FileNotFoundError:
             print("'say' command not found (are you on macOS?)")
             return False
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return False
+        # except Exception as e:
+        #     print(f"Unexpected error: {e}")
+        #     return False
 
 
 if __name__ == "__main__":
