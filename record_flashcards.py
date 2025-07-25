@@ -78,11 +78,11 @@ def kokoro_local_tts_to_mp3(
 
 
 if __name__ == "__main__":
-    sentence = "Hello, this is Kokoro speaking locally!"
+    sentence = "Quelle rue cherchez-vous ?"
     kokoro_local_tts_to_mp3(
         text=sentence,
         output_path="hello_local.mp3",
-        lang_code="a",
-        voice="af_heart",
+        lang_code="f",
+        voice="ff_siwis",
         speed=1.0,
     )
