@@ -206,7 +206,7 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# Ignore any input or outpu content files
+# Ignore any input or output content files
 *.md
 *.txt
 *.mp3
