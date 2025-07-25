@@ -1,1 +1,7 @@
 python_dotenv
+meson>=1.3.0
+kokoro
+torch
+numpy
+soundfile
+pydub
