@@ -15,7 +15,7 @@ def create_flashcards(in_yaml_filename):
     for i, flashcard in enumerate(flashcards):
         english = flashcard["en"]
         french = flashcard["fr"]
-        out_mp3_filename = os.path.join("output", f"{i:0{5}}.mp3")
+        out_mp3_filename = os.path.join("output", "mp3", f"{i:0{5}}.mp3")
         flashcard["mp3"] = out_mp3_filename
         flashcard["answer"] = f"{french} / {english}"
         print(f"Recording: {french}")
