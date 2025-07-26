@@ -216,6 +216,7 @@ __marimo__/
 input/
 intermediate/
 output/
+*.apkg
 
 # macOS junk
 .DS_Store

@@ -30,6 +30,13 @@ def kokoro_local_tts_to_mp3(
         message=r".*dropout option adds dropout after all but last recurrent layer.*"
     )
 
+    # Silence depreacation warning
+    warnings.filterwarnings(
+        "ignore",
+        category=FutureWarning,
+        message=r".*torch\.nn\.utils\.weight_norm.*deprecated.*"
+    )
+
     # 2️⃣ Initialize the pipeline with explicit repo_id
     pipeline = KPipeline(
         repo_id=model_id,
