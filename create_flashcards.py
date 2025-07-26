@@ -29,6 +29,13 @@ def create_flashcards():
     return flashcards
 
 
+import genanki
+import random
+import os
+import shutil
+import html
+
+
 def create_audio_multiple_choice_deck(
     cards_data,
     deck_name="Audio Multiple Choice Deck",
@@ -95,19 +102,19 @@ def create_audio_multiple_choice_deck(
                     <h3>Audio:</h3>
                     {{Audio}}
                     <div style="text-align: left; max-width: 600px; margin: 30px auto; font-size: 18px;">
-                        <div style="margin: 10px 0; padding: 10px; background: {{#CorrectPosition}}{{#eq CorrectPosition 1}}#90EE90{{/eq}}{{^eq CorrectPosition 1}}#f5f5f5{{/eq}}{{/CorrectPosition}}; border-radius: 5px;">
+                        <div id="option1" style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                             <strong>A)</strong> {{Option1}}
                         </div>
-                        <div style="margin: 10px 0; padding: 10px; background: {{#CorrectPosition}}{{#eq CorrectPosition 2}}#90EE90{{/eq}}{{^eq CorrectPosition 2}}#f5f5f5{{/eq}}{{/CorrectPosition}}; border-radius: 5px;">
+                        <div id="option2" style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                             <strong>B)</strong> {{Option2}}
                         </div>
-                        <div style="margin: 10px 0; padding: 10px; background: {{#CorrectPosition}}{{#eq CorrectPosition 3}}#90EE90{{/eq}}{{^eq CorrectPosition 3}}#f5f5f5{{/eq}}{{/CorrectPosition}}; border-radius: 5px;">
+                        <div id="option3" style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                             <strong>C)</strong> {{Option3}}
                         </div>
-                        <div style="margin: 10px 0; padding: 10px; background: {{#CorrectPosition}}{{#eq CorrectPosition 4}}#90EE90{{/eq}}{{^eq CorrectPosition 4}}#f5f5f5{{/eq}}{{/CorrectPosition}}; border-radius: 5px;">
+                        <div id="option4" style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                             <strong>D)</strong> {{Option4}}
                         </div>
-                        <div style="margin: 10px 0; padding: 10px; background: {{#CorrectPosition}}{{#eq CorrectPosition 5}}#90EE90{{/eq}}{{^eq CorrectPosition 5}}#f5f5f5{{/eq}}{{/CorrectPosition}}; border-radius: 5px;">
+                        <div id="option5" style="margin: 10px 0; padding: 10px; background: #f5f5f5; border-radius: 5px;">
                             <strong>E)</strong> {{Option5}}
                         </div>
                     </div>
@@ -117,14 +124,16 @@ def create_audio_multiple_choice_deck(
                 
                 <script>
                 // JavaScript to highlight correct answer
-                document.addEventListener('DOMContentLoaded', function() {
-                    var correctPos = '{{CorrectPosition}}';
-                    var options = document.querySelectorAll('div[style*="margin: 10px 0"]');
-                    if (options.length >= correctPos && correctPos > 0) {
-                        options[correctPos - 1].style.background = '#90EE90';
-                        options[correctPos - 1].style.fontWeight = 'bold';
+                (function() {
+                    var correctPos = {{CorrectPosition}};
+                    if (correctPos >= 1 && correctPos <= 5) {
+                        var correctOption = document.getElementById('option' + correctPos);
+                        if (correctOption) {
+                            correctOption.style.backgroundColor = '#90EE90';
+                            correctOption.style.fontWeight = 'bold';
+                        }
                     }
-                });
+                })();
                 </script>
                 """,
             },
