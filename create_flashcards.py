@@ -2,13 +2,13 @@ import os
 import random
 import os
 import shutil
+import sys
 import yaml
 from kokoro_interface import kokoro_local_tts_to_mp3
 import genanki
 
 
-def create_flashcards():
-    in_yaml_filename = os.path.join("input", "flashcards.yml")
+def create_flashcards(in_yaml_filename):
     with open(in_yaml_filename, "r", encoding="utf-8") as in_file:
         flashcards = yaml.safe_load(in_file)
     print(f"Found {len(flashcards)} flashcards")
@@ -27,13 +27,6 @@ def create_flashcards():
             speed=1.0,
         )
     return flashcards
-
-
-import genanki
-import random
-import os
-import shutil
-import html
 
 
 def create_audio_multiple_choice_deck(
@@ -242,13 +235,29 @@ def create_audio_multiple_choice_deck(
 
 # Example usage
 if __name__ == "__main__":
-    cards_data = create_flashcards()
+    # Parse command line arguments. There should be one: the basename
+    # of the input yaml, output apkg, and deck_name
+    if len(sys.argv) != 2:
+        print("Usage: python create_flashcards.py [input, output, and deck title basename with no extension]")
+        sys.exit(1)
+    
+    # Make the filenames and title
+    base = sys.argv[1]
+    in_yaml_filename = os.path.join("input", f"{base}.yml")
+    out_apkg_filename = os.path.join("output", f"{base}.apkg")
+    deck_title = base.replace("_", " ").replace("-", " ").title()
+    print(in_yaml_filename)
+    print(out_apkg_filename)
+    print(deck_title)
 
-    # Create the deck
-    saved_filename = create_audio_multiple_choice_deck(
-        cards_data=cards_data,
-        deck_name="French Audio Flashcards",
-        output_filename="french_audio_flashcards.apkg",
-    )
+    # # Create flashcard media and answers
+    # cards_data = create_flashcards()
 
-    print(saved_filename)
+    # # Create the deck
+    # saved_filename = create_audio_multiple_choice_deck(
+    #     cards_data=cards_data,
+    #     deck_name="French Audio Flashcards",
+    #     output_filename="french_audio_flashcards.apkg",
+    # )
+
+    # print(saved_filename)
