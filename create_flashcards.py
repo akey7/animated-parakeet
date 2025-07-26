@@ -13,8 +13,8 @@ def create_flashcards(in_yaml_filename):
         flashcards = yaml.safe_load(in_file)
     print(f"Found {len(flashcards)} flashcards")
     for i, flashcard in enumerate(flashcards):
-        english = flashcard["english"]
-        french = flashcard["french"]
+        english = flashcard["en"]
+        french = flashcard["fr"]
         out_mp3_filename = os.path.join("output", f"{i:0{5}}.mp3")
         flashcard["mp3"] = out_mp3_filename
         flashcard["answer"] = f"{french} / {english}"
@@ -245,19 +245,19 @@ if __name__ == "__main__":
     base = sys.argv[1]
     in_yaml_filename = os.path.join("input", f"{base}.yml")
     out_apkg_filename = os.path.join("output", f"{base}.apkg")
-    deck_title = base.replace("_", " ").replace("-", " ").title()
+    deck_name = base.replace("_", " ").replace("-", " ").title()
     print(in_yaml_filename)
     print(out_apkg_filename)
-    print(deck_title)
+    print(deck_name)
 
-    # # Create flashcard media and answers
-    # cards_data = create_flashcards()
+    # Create flashcard media and answers
+    cards_data = create_flashcards(in_yaml_filename)
 
-    # # Create the deck
-    # saved_filename = create_audio_multiple_choice_deck(
-    #     cards_data=cards_data,
-    #     deck_name="French Audio Flashcards",
-    #     output_filename="french_audio_flashcards.apkg",
-    # )
+    # Create the deck
+    saved_filename = create_audio_multiple_choice_deck(
+        cards_data=cards_data,
+        deck_name=deck_name,
+        output_filename=out_apkg_filename,
+    )
 
-    # print(saved_filename)
+    print("Saved:", saved_filename)
