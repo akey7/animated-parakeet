@@ -29,9 +29,7 @@ class RecordMarkdown:
                     f.write(plain_text)
                 voices = ["Amélie", "Thomas"]
                 for voice in voices:
-                    aiff_filename_01 = (
-                        f'{filename.replace(".md", "")} {voice}.aiff'
-                    )
+                    aiff_filename_01 = f'{filename.replace(".md", "")} {voice}.aiff'
                     aiff_filename = os.path.join(
                         self.intermediate_folder, aiff_filename_01
                     )
@@ -65,9 +63,7 @@ class RecordMarkdown:
         md_text = md_text.replace("l' ", "l'").replace("L' ", "L'")
         return md_text
 
-    def execute_say_command(
-        self, input_txt_filename, output_aiff_filename, voice
-    ):
+    def execute_say_command(self, input_txt_filename, output_aiff_filename, voice):
         try:
             result = subprocess.run(
                 [

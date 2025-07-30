@@ -6,10 +6,11 @@ import os
 load_dotenv()
 
 elevenlabs = ElevenLabs(
-  api_key=os.getenv("ELEVENLABS_API_KEY"),
+    api_key=os.getenv("ELEVENLABS_API_KEY"),
 )
 
 voice_id = os.getenv("ELEVENLABS_VOICE_ID")
+
 
 def elevenlabs_tts_to_mp3(text, filename):
     audio = elevenlabs.text_to_speech.convert(
@@ -23,5 +24,7 @@ def elevenlabs_tts_to_mp3(text, filename):
             f.write(chunk)
 
 
-if __name__ == "__main__":
-    elevenlabs_tts_to_mp3(text="Ils étaient souvent en retard le matin.", filename="output/mp3/test.mp3")
+# if __name__ == "__main__":
+#     elevenlabs_tts_to_mp3(
+#         text="Ils étaient souvent en retard le matin.", filename="output/mp3/test.mp3"
+#     )

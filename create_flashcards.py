@@ -4,7 +4,9 @@ import os
 import shutil
 import sys
 import yaml
-from kokoro_interface import kokoro_local_tts_to_mp3
+
+# from kokoro_interface import kokoro_local_tts_to_mp3
+from elevenlabs_interface import elevenlabs_tts_to_mp3
 import genanki
 
 
@@ -19,13 +21,14 @@ def create_flashcards(in_yaml_filename):
         flashcard["mp3"] = out_mp3_filename
         flashcard["answer"] = f"{french} / {english}"
         print(f"Recording: {french}")
-        kokoro_local_tts_to_mp3(
-            text=french,
-            output_path=out_mp3_filename,
-            lang_code="f",
-            voice="ff_siwis",
-            speed=1.0,
-        )
+        # kokoro_local_tts_to_mp3(
+        #     text=french,
+        #     output_path=out_mp3_filename,
+        #     lang_code="f",
+        #     voice="ff_siwis",
+        #     speed=1.0,
+        # )
+        elevenlabs_tts_to_mp3(text=french, filename=out_mp3_filename)
     return flashcards
 
 
@@ -238,9 +241,11 @@ if __name__ == "__main__":
     # Parse command line arguments. There should be one: the basename
     # of the input yaml, output apkg, and deck_name
     if len(sys.argv) != 2:
-        print("Usage: python create_flashcards.py [input, output, and deck title basename with no extension]")
+        print(
+            "Usage: python create_flashcards.py [input, output, and deck title basename with no extension]"
+        )
         sys.exit(1)
-    
+
     # Make the filenames and title
     base = sys.argv[1]
     in_yaml_filename = os.path.join("input", f"{base}.yml")
