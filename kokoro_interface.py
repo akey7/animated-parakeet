@@ -7,6 +7,7 @@ import torch
 from kokoro import KPipeline
 from pydub import AudioSegment
 
+
 def kokoro_local_tts_to_mp3(
     text: str,
     output_path: str,
@@ -27,14 +28,14 @@ def kokoro_local_tts_to_mp3(
     warnings.filterwarnings(
         "ignore",
         category=UserWarning,
-        message=r".*dropout option adds dropout after all but last recurrent layer.*"
+        message=r".*dropout option adds dropout after all but last recurrent layer.*",
     )
 
     # Silence depreacation warning
     warnings.filterwarnings(
         "ignore",
         category=FutureWarning,
-        message=r".*torch\.nn\.utils\.weight_norm.*deprecated.*"
+        message=r".*torch\.nn\.utils\.weight_norm.*deprecated.*",
     )
 
     # 2️⃣ Initialize the pipeline with explicit repo_id
@@ -63,7 +64,7 @@ def kokoro_local_tts_to_mp3(
         # Load raw PCM data
         segment = AudioSegment.from_raw(
             io.BytesIO(audio_int16.tobytes()),
-            sample_width=2,    # 2 bytes per sample for int16
+            sample_width=2,  # 2 bytes per sample for int16
             frame_rate=24000,  # Kokoro outputs at 24 kHz
             channels=1,
         )
@@ -81,7 +82,6 @@ def kokoro_local_tts_to_mp3(
     combined.export(out_file, format="mp3")
 
     print(f"Synthesized speech saved to {out_file.resolve()}")
-
 
 
 if __name__ == "__main__":
