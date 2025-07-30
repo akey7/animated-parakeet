@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 from elevenlabs import play
 import os
+import time
 
 load_dotenv()
 
@@ -12,7 +13,7 @@ elevenlabs = ElevenLabs(
 voice_id = os.getenv("ELEVENLABS_VOICE_ID")
 
 
-def elevenlabs_tts_to_mp3(text, filename):
+def elevenlabs_tts_to_mp3(text, filename, delay=5):
     audio = elevenlabs.text_to_speech.convert(
         text=text,
         voice_id=voice_id,
@@ -22,6 +23,7 @@ def elevenlabs_tts_to_mp3(text, filename):
     with open(filename, "wb") as f:
         for chunk in audio:
             f.write(chunk)
+    time.sleep(delay)
 
 
 # if __name__ == "__main__":
