@@ -2,20 +2,20 @@ import os
 import random
 import os
 import shutil
+import sys
 import yaml
 from kokoro_interface import kokoro_local_tts_to_mp3
 import genanki
 
 
-def create_flashcards():
-    in_yaml_filename = os.path.join("input", "flashcards.yml")
+def create_flashcards(in_yaml_filename):
     with open(in_yaml_filename, "r", encoding="utf-8") as in_file:
         flashcards = yaml.safe_load(in_file)
     print(f"Found {len(flashcards)} flashcards")
     for i, flashcard in enumerate(flashcards):
-        english = flashcard["english"]
-        french = flashcard["french"]
-        out_mp3_filename = os.path.join("output", f"{i:0{5}}.mp3")
+        english = flashcard["en"]
+        french = flashcard["fr"]
+        out_mp3_filename = os.path.join("output", "mp3", f"{i:0{5}}.mp3")
         flashcard["mp3"] = out_mp3_filename
         flashcard["answer"] = f"{french} / {english}"
         print(f"Recording: {french}")
@@ -27,13 +27,6 @@ def create_flashcards():
             speed=1.0,
         )
     return flashcards
-
-
-import genanki
-import random
-import os
-import shutil
-import html
 
 
 def create_audio_multiple_choice_deck(
@@ -242,13 +235,29 @@ def create_audio_multiple_choice_deck(
 
 # Example usage
 if __name__ == "__main__":
-    cards_data = create_flashcards()
+    # Parse command line arguments. There should be one: the basename
+    # of the input yaml, output apkg, and deck_name
+    if len(sys.argv) != 2:
+        print("Usage: python create_flashcards.py [input, output, and deck title basename with no extension]")
+        sys.exit(1)
+    
+    # Make the filenames and title
+    base = sys.argv[1]
+    in_yaml_filename = os.path.join("input", f"{base}.yml")
+    out_apkg_filename = os.path.join("output", f"{base}.apkg")
+    deck_name = base.replace("_", " ").replace("-", " ").title()
+    print(in_yaml_filename)
+    print(out_apkg_filename)
+    print(deck_name)
+
+    # Create flashcard media and answers
+    cards_data = create_flashcards(in_yaml_filename)
 
     # Create the deck
     saved_filename = create_audio_multiple_choice_deck(
         cards_data=cards_data,
-        deck_name="French Audio Flashcards",
-        output_filename="french_audio_flashcards.apkg",
+        deck_name=deck_name,
+        output_filename=out_apkg_filename,
     )
 
-    print(saved_filename)
+    print("Saved:", saved_filename)
