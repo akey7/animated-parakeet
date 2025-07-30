@@ -1,6 +1,5 @@
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
-from elevenlabs import play
 import os
 import time
 
@@ -13,7 +12,7 @@ elevenlabs = ElevenLabs(
 voice_id = os.getenv("ELEVENLABS_VOICE_ID")
 
 
-def elevenlabs_tts_to_mp3(text, filename, delay=5):
+def elevenlabs_tts_to_mp3(text, filename, delay=2):
     audio = elevenlabs.text_to_speech.convert(
         text=text,
         voice_id=voice_id,
