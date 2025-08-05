@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
+from elevenlabs import save, Voice, VoiceSettings
 import os
 import time
 
@@ -16,12 +17,10 @@ def elevenlabs_tts_to_mp3(text, filename, delay=2):
     audio = elevenlabs.text_to_speech.convert(
         text=text,
         voice_id=voice_id,
-        model_id="eleven_flash_v2_5",
+        model_id="eleven_multilingual_v2",
         output_format="mp3_44100_128",
     )
-    with open(filename, "wb") as f:
-        for chunk in audio:
-            f.write(chunk)
+    save(audio, filename)
     time.sleep(delay)
 
 

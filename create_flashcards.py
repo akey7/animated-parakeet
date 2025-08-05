@@ -13,14 +13,14 @@ import genanki
 def create_flashcards(in_yaml_filename):
     with open(in_yaml_filename, "r", encoding="utf-8") as in_file:
         flashcards = yaml.safe_load(in_file)
-    print(f"Found {len(flashcards)} flashcards")
+    n_flashcards = len(flashcards)
     for i, flashcard in enumerate(flashcards):
         english = flashcard["en"]
         french = flashcard["fr"]
         out_mp3_filename = os.path.join("output", "mp3", f"{i:0{5}}.mp3")
         flashcard["mp3"] = out_mp3_filename
         flashcard["answer"] = f"{french} / {english}"
-        print(f"Recording: {french}")
+        print(f"{i+1} of {n_flashcards} Recording: {french}")
         # kokoro_local_tts_to_mp3(
         #     text=french,
         #     output_path=out_mp3_filename,
